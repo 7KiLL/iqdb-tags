@@ -1,0 +1,139 @@
+$konachan:        #555
+$konachan-hover:  #300
+$konachan-link:   #ee8887
+
+$gelbooru:        #006FFA
+$gelbooru-hover:  #E89E02
+
+
+.btn
+  font-family: "Century Gothic", sans-serif
+  padding: 0.2em 0.5em
+  border: 1px solid #000000
+  line-height: 1.5
+  margin: 0.1em
+
+
+//Konachan
+li.konachan
+  @extend li.gelbooru
+button.konachan
+  font-weight: bold
+  color: $konachan-link
+  height: 28px
+  width: 100%
+  border: 0
+  background-color: $konachan
+  &:hover
+    background-color: $konachan-hover
+input.konachan
+  @extend input.gelbooru
+label.konachan
+  color: $konachan-link
+  font-weight: 600
+
+//Yandere
+li.yandere
+  margin-bottom: 0.2em!important
+  text-align: left !important
+  margin-top: .5em !important
+button.yandere
+  @extend button.konachan
+input.yandere
+  @extend input.konachan
+label.yandere
+  @extend input.konachan
+  border: 0 !important
+
+//Danbooru
+li.danbooru
+  margin-bottom: 0.2em!important
+  text-align: left !important
+  margin-top: .5em !important
+button.danbooru
+  @extend button.gelbooru
+input.danbooru
+  @extend input.gelbooru
+label.danbooru
+  color: #000
+
+//GELBOORU
+li.gelbooru
+  margin-bottom: 0.2em!important
+  text-align: center !important
+  margin-top: .5em !important
+li.check
+  text-align: left !important
+button.gelbooru
+  font-weight: bold
+  color: #fff
+  height: 28px
+  width: 100%
+  border: 1px solid #e2e2e2
+  background-color: $gelbooru
+  &:hover
+    background-color: $gelbooru-hover
+input.gelbooru
+  padding: 2px
+  border: 1px solid #e0e0e0
+  &:focus
+    background-color: #ffc
+label.gelbooru
+  color: #000
+
+//ShuuShuu
+label.shuushuu
+  color: #204A87
+  font-weight: bold
+button.shuushuu
+  background: #F5FAFF
+  border: 1px solid #204A87
+  -moz-border-radius: 5px
+  -webkit-border-radius: 5px
+  border-radius: 5px
+  color: #204A87
+  cursor: pointer
+  font-weight: bold
+  margin: 1px
+  &:hover
+    background: white
+    border-color: #E85305
+    color: #E85305
+    text-decoration: underline
+  &:focus
+    background: #204A87
+    border: 2px solid black
+    color: white !important
+    margin: 0
+
+//Sankaku
+button.sankaku
+  border: 2px solid #DDD
+  font-weight: bold
+  padding: 0.2em 2em
+  margin: 0.1em
+  cursor: pointer
+  &:hover
+    color: #666
+    background: #FAFAFA
+input.sankaku:not(.check)
+  border: 2px solid #999
+  background: #FAFAFA
+  background-image: -moz-linear-gradient(#fff,#DDDDDD)
+  background-image: -webkit-gradient(linear,left bottom,left top,color-stop(0,#DDDDDD),color-stop(1,#fff))
+  -moz-border-radius: 35px
+  border-radius: 35px
+  border-width: 1px
+  border-style: solid
+  border-color: #DDD
+  width: 182px
+  height: 20px
+  padding: 2px 8px
+  overflow: hidden
+  &:hover, &:focus
+    background: #FAFAFA
+    outline: none
+    -moz-box-shadow: 0 1px 4px rgba(0,0,0,0.5) inset
+    -webkit-box-shadow: 0 1px 4px rgba(0,0,0,0.5) inset
+    box-shadow: 0 1px 4px rgba(0,0,0,0.5) inset
+
