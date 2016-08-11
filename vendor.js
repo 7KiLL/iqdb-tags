@@ -11,13 +11,13 @@ String.prototype.clearHash = function () {
     clean = clean.replace(/@/g, 'a');
     clean = clean.replace(/(^_|_$)/, '');
     clean = '#' + clean;
-    return clean; 
+    return clean;
 };
 
 //Loading out CSS file
 {
     //CSS file link
-    var css_link = '../style.css';
+    var css_link = 'https://dl.dropboxusercontent.com/s/tew2n6b4y682hos/iqdb.css';
     //
     var head  = document.getElementsByTagName('head')[0];
     var link  = document.createElement('link');
@@ -131,13 +131,13 @@ var iqdb = {
         e = e || document;
         planB = planB || '#image';
         var link;
+        link = e.querySelector(planB).src;
         Global.images.forEach(function (el, i) {
-            link = e.querySelector(el);
-            if(link!=null)
-                return link.href;
+            var img = e.querySelector(el);
+            if(img!=null)
+                link = img.href;
         });
-        link = e.querySelector(planB);
-        return link.src;
+        return link;
     }
 };
 
@@ -172,7 +172,7 @@ window.onload = function() {
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
-
+            console.log(iqdb.getImage());
             var parent = document.querySelector('.sidebar');
             parent.insertAdjacentHTML('afterbegin', btnTags + btnImage + '<hr>' +
                 settings + '<ul class='+ Global.name +'>' +
