@@ -4,13 +4,14 @@
 //Helpers
 String.prototype.clearHash = function () {
     var clean = '';
-    clean = this.replace(/ /g, '_');
-    clean = clean.replace(/(\(|{|\[).+(\]|}|\))/, '');
-    clean = clean.replace(/(!|\?)$/g, '');
-    clean = clean.replace(/:/g, '_');
-    clean = clean.replace(/@/g, 'a');
-    clean = clean.replace(/\//g, 'a');
-    clean = clean.replace(/(^_|_$)/, '');
+    clean = this
+        .replace(/ /g, '_')
+        .replace(/(\(|{|\[).+(\]|}|\))/, '')
+        .replace(/(!|\?)/g, '')
+        .replace(/:/g, '_')
+        .replace(/@/g, 'a')
+        .replace(/\//g, '_')
+        .replace(/(^_+|_+$)/, '');
     clean = '#' + clean;
     return clean;
 };
@@ -146,6 +147,7 @@ var iqdb = {
                 tagsArray.push(e.innerHTML);
             });
         }
+        tagsArray = iqdb.unique(tagsArray);
         var hashTags = tagsArray.map(function (name) {
             return name.clearHash() + localStorage.getItem('postfix');;
         });
@@ -230,7 +232,7 @@ window.onload = function() {
             var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
 
             var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
-            var divider = iqdb.createInput('text', '_divider', 'Separator');
+            var divider = iqdb.createInput('text', '_divider', 'Separator </br>');
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());

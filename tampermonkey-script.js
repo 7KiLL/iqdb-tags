@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         iqdb quick post
 // @namespace    http://tampermonkey.net/
-// @version      1.3
+// @version      1.4
 // @homepage     https://github.com/7kill/iqdb-tags
 // @description  Quick tag/link buttons for iqdb boards. Auto hash-tags generator. Search in iqdb by button
 // @author       7KiLL
@@ -16,17 +16,22 @@
 // ==/UserScript==
 /**
  * Created by 7KiLL on 28/07/16.
+ * UPD 1.4: Some HTML fixes, code beautify
+ * UPD 1.3: Image extract priority (was an issue when VK loaded image as document), iqdb search tweaks. 
+ * UPD 1.2: iqdb search release, much code refactoring
+ * UPD 1.1: Sankaku added 
  */
 //Helpers
 String.prototype.clearHash = function () {
     var clean = '';
-    clean = this.replace(/ /g, '_');
-    clean = clean.replace(/(\(|{|\[).+(\]|}|\))/, '');
-    clean = clean.replace(/(!|\?)$/g, '');
-    clean = clean.replace(/:/g, '_');
-    clean = clean.replace(/@/g, 'a');
-    clean = clean.replace(/\//g, 'a');
-    clean = clean.replace(/(^_|_$)/, '');
+    clean = this
+        .replace(/ /g, '_')
+        .replace(/(\(|{|\[).+(\]|}|\))/, '')
+        .replace(/(!|\?)/g, '')
+        .replace(/:/g, '_')
+        .replace(/@/g, 'a')
+        .replace(/\//g, '_')
+        .replace(/(^_+|_+$)/, '');
     clean = '#' + clean;
     return clean;
 };
@@ -162,6 +167,7 @@ var iqdb = {
                 tagsArray.push(e.innerHTML);
             });
         }
+        tagsArray = iqdb.unique(tagsArray);
         var hashTags = tagsArray.map(function (name) {
             return name.clearHash() + localStorage.getItem('postfix');;
         });
@@ -246,7 +252,7 @@ window.onload = function() {
             var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
 
             var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
-            var divider = iqdb.createInput('text', '_divider', 'Separator');
+            var divider = iqdb.createInput('text', '_divider', 'Separator </br>');
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
@@ -446,5 +452,6 @@ window.onload = function() {
     iqdb.Input.load('divider', inputDivider);
     iqdb.Input.watch('divider', inputDivider);
     iqdb.searchRequest('iqdb-search');
+    
     new Clipboard('.btn');
 };
