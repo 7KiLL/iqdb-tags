@@ -1,10 +1,14 @@
 /**
  * Created by 7KiLL on 28/07/16.
+ * UPD 1.5: forEach rework. Dunno how did it work in Chrome, but Firefox make me to fix this
+ * UPD 1.4: Some HTML fixes, code beautify
+ * UPD 1.3: Image extract priority (was an issue when VK loaded image as document), iqdb search tweaks.
+ * UPD 1.2: iqdb search release, much code refactoring
+ * UPD 1.1: Sankaku added
  */
 //Helpers
 String.prototype.clearHash = function () {
-    var clean = '';
-    clean = this
+    var clean = this
         .replace(/ /g, '_')
         .replace(/(\(|{|\[).+(\]|}|\))/, '')
         .replace(/(!|\?)/g, '')
@@ -83,15 +87,15 @@ var iqdb = {
         // }
     },
     unique: function (arr) {
-    var obj = {};
+        var obj = {};
 
-    for (var i = 0; i < arr.length; i++) {
-        var str = arr[i];
-        obj[str] = true; // запомнить строку в виде свойства объекта
-    }
+        for (var i = 0; i < arr.length; i++) {
+            var str = arr[i];
+            obj[str] = true; // запомнить строку в виде свойства объекта
+        }
 
-    return Object.keys(obj); // или собрать ключи перебором для IE8-
-},
+        return Object.keys(obj); // или собрать ключи перебором для IE8-
+    },
     checkStorage: function (param, value) {
         if(!localStorage.getItem(param))
             localStorage.setItem(param, value);
@@ -101,10 +105,10 @@ var iqdb = {
         if(type == 'checkbox')
             name = '"' + Global.name + ' check"';
         var input;
-            input = '<li class=' + name + '>' +
-                    '<label class='+ name +' for='+ id +'>'+ text +'</label>' +
-                    '<input class='+ name +' type='+ type +' id='+ id +'>' +
-                    '</li>';
+        input = '<li class=' + name + '>' +
+            '<label class='+ name +' for='+ id +'>'+ text +'</label>' +
+            '<input class='+ name +' type='+ type +' id='+ id +'>' +
+            '</li>';
         return input;
     },
     createButton: function (id, text, method, shuu) {
@@ -129,27 +133,27 @@ var iqdb = {
             tagsArray.push(callback);
         }
         else {
-            tags.forEach(function (e, i) {
-                tagsArray.push(e.innerHTML);
+            [].forEach.call(tags, function(el) {
+                tagsArray.push(el.innerHTML);
             });
         }
         //Chars
         if(localStorage.getItem('char')=="true"){
             var chars = e.querySelectorAll(Global.selectors.characters);
-            chars.forEach(function (e, i) {
-                tagsArray.push(e.innerHTML);
+            [].forEach.call(chars, function(el) {
+                tagsArray.push(el.innerHTML);
             });
         }
         //Artist
         if(localStorage.getItem('artist')=="true"){
             var artist = e.querySelectorAll(Global.selectors.artist);
-            artist.forEach(function (e, i) {
-                tagsArray.push(e.innerHTML);
+            [].forEach.call(artist, function(el) {
+                tagsArray.push(el.innerHTML);
             });
         }
         tagsArray = iqdb.unique(tagsArray);
         var hashTags = tagsArray.map(function (name) {
-            return name.clearHash() + localStorage.getItem('postfix');;
+            return name.clearHash() + localStorage.getItem('postfix');
         });
         return hashTags.join(localStorage.getItem('divider'));
     },
@@ -158,7 +162,7 @@ var iqdb = {
         planB = planB || '#image';
         var link;
         link = e.querySelector(planB).src;
-        Global.images.forEach(function (el, i) {
+        Global.images.forEach(function (el) {
             var img = e.querySelector(el);
             if(img!=null)
                 link = img.href;
@@ -189,6 +193,7 @@ window.onload = function() {
             "#highres"
         ],
         render: function () {
+
             var settings = '<h5 id="sett">Settings</h5>';
             var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
             var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
@@ -198,8 +203,8 @@ window.onload = function() {
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
+
             var btnSearch = iqdb.createSearchButton(iqdb.getImage());
-            console.log(iqdb.getImage());
             var parent = document.querySelector('.sidebar');
             parent.insertAdjacentHTML('afterbegin', btnTags + btnImage + btnSearch + '<hr>' +
                 settings + '<ul class='+ Global.name +'>' +
@@ -240,9 +245,9 @@ window.onload = function() {
 
             var parent = document.querySelector('.sidebar');
             parent.insertAdjacentHTML('afterbegin', btnTags + btnImage + btnSearch + '<hr>' +
-                 settings +
+                settings +
                 '<ul class='+ Global.name +'>'+
-                 chars + artist + postfix + divider +
+                chars + artist + postfix + divider +
                 '</ul>');
         },
         updateTags: function () {
@@ -351,14 +356,14 @@ window.onload = function() {
         },
         updateTags: function () {
             var posts = document.querySelectorAll('.image_thread');
-            posts.forEach(function (e, i) {
+            posts.forEach(function (e) {
                 var tagButton = e.querySelector('._tags');
                 tagButton.setAttribute('data-clipboard-text', iqdb.getTags(e));
             });
         },
         render: function () {
             var posts = document.querySelectorAll('.image_thread');
-            posts.forEach(function (e, i) {
+            posts.forEach(function (e) {
                 ShuuShuu.createButtons(e);
             });
             var settings = '<h2 id="sett">Settings</h2>';
