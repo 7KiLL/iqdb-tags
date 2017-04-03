@@ -1,5 +1,6 @@
 /**
  * Created by 7KiLL on 28/07/16.
+ * UPD 1.6.1:  Fixed bugs with zerochan tags check and image link for zerochan
  * UPD 1.6b:   Added zerochan, anime-pictures, manga-drawing.
  * UPD 1.5.1b: characters replacing fixes
  * UPD 1.5:    forEach rework. Dunno how did it work in Chrome, but Firefox make me to fix this
@@ -139,13 +140,19 @@ var iqdb = {
             [].forEach.call(tags, function(el) {
                 if(Global.name == "zerochan" && /Game|Series/.test(el.parentNode.innerHTML))
                     tagsArray.push(el.innerHTML);
+                else
+                    tagsArray.push(el.innerHTML);
             });
+            if(Global.name == "zerochan" && !tagsArray.length)
+                tagsArray.push(callback);
         }
         //Chars
         if(localStorage.getItem('char')=="true"){
             var chars = e.querySelectorAll(Global.selectors.characters);
             [].forEach.call(chars, function(el) {
                 if(Global.name == "zerochan" && /Character/.test(el.parentNode.innerHTML))
+                    tagsArray.push(el.innerHTML);
+                else
                     tagsArray.push(el.innerHTML);
             });
         }
@@ -154,6 +161,8 @@ var iqdb = {
             var artist = e.querySelectorAll(Global.selectors.artist);
             [].forEach.call(artist, function(el) {
                 if(Global.name == "zerochan" && /Mangaka/.test(el.parentNode.innerHTML))
+                    tagsArray.push(el.innerHTML);
+                else
                     tagsArray.push(el.innerHTML);
             });
         }
@@ -386,7 +395,7 @@ window.onload = function() {
                 '</ul></div>');
         }
     };
-    if(/shuushuu/i.test(location.href))
+    if(/./i.test(location.href))
         Global = ShuuShuu;
     //Sankaku
     var Sankaku = {
@@ -518,7 +527,7 @@ window.onload = function() {
             characters: '#tags > li > a'
         },
         images: [
-            '.imagecache.imagecache-display'
+            '#large > a'
         ],
         render: function () {
             console.log(iqdb.getTags());
