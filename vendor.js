@@ -1,10 +1,12 @@
 /**
  * Created by 7KiLL on 28/07/16.
- * UPD 1.5: forEach rework. Dunno how did it work in Chrome, but Firefox make me to fix this
- * UPD 1.4: Some HTML fixes, code beautify
- * UPD 1.3: Image extract priority (was an issue when VK loaded image as document), iqdb search tweaks.
- * UPD 1.2: iqdb search release, much code refactoring
- * UPD 1.1: Sankaku added
+ * UPD 1.6b:   Added zerochan, anime-pictures, manga-drawing.
+ * UPD 1.5.1b: characters replacing fixes
+ * UPD 1.5:    forEach rework. Dunno how did it work in Chrome, but Firefox make me to fix this
+ * UPD 1.4:    Some HTML fixes, code beautify
+ * UPD 1.3:    Image extract priority (was an issue when VK loaded image as document), iqdb search tweaks.
+ * UPD 1.2:    iqdb search release, much code refactoring
+ * UPD 1.1:    Sankaku added
  */
 //Helpers
 String.prototype.clearHash = function () {
@@ -15,6 +17,7 @@ String.prototype.clearHash = function () {
         .replace(/:/g, '_')
         .replace(/@/g, 'a')
         .replace(/\//g, '_')
+        .replace(/\(\w+.../, '')
         .replace(/(^_+|_+$)/, '');
     clean = '#' + clean;
     return clean;
@@ -134,21 +137,24 @@ var iqdb = {
         }
         else {
             [].forEach.call(tags, function(el) {
-                tagsArray.push(el.innerHTML);
+                if(Global.name == "zerochan" && /Game|Series/.test(el.parentNode.innerHTML))
+                    tagsArray.push(el.innerHTML);
             });
         }
         //Chars
         if(localStorage.getItem('char')=="true"){
             var chars = e.querySelectorAll(Global.selectors.characters);
             [].forEach.call(chars, function(el) {
-                tagsArray.push(el.innerHTML);
+                if(Global.name == "zerochan" && /Character/.test(el.parentNode.innerHTML))
+                    tagsArray.push(el.innerHTML);
             });
         }
         //Artist
         if(localStorage.getItem('artist')=="true"){
             var artist = e.querySelectorAll(Global.selectors.artist);
             [].forEach.call(artist, function(el) {
-                tagsArray.push(el.innerHTML);
+                if(Global.name == "zerochan" && /Mangaka/.test(el.parentNode.innerHTML))
+                    tagsArray.push(el.innerHTML);
             });
         }
         tagsArray = iqdb.unique(tagsArray);
@@ -161,11 +167,12 @@ var iqdb = {
         e = e || document;
         planB = planB || '#image';
         var link;
-        link = e.querySelector(planB).src;
+        try{link = e.querySelector(planB).src;}
+        catch(e){}
         Global.images.forEach(function (el) {
             var img = e.querySelector(el);
             if(img!=null)
-                link = img.href;
+                link = img.href || img.src;
         });
         return link;
     }
@@ -381,6 +388,7 @@ window.onload = function() {
     };
     if(/shuushuu/i.test(location.href))
         Global = ShuuShuu;
+    //Sankaku
     var Sankaku = {
         name: 'sankaku',
         status: 'beta',
@@ -394,7 +402,7 @@ window.onload = function() {
             '#highres'
         ],
         render: function () {
-            var settings = '<h5 class="sankaku" id="sett">Settings</h5><br>';
+            var settings = '<h5 class='+ Global.name +' id="sett">Settings</h5><br>';
             var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
             var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
 
@@ -419,6 +427,128 @@ window.onload = function() {
     };
     if(/sankaku/i.test(location.href))
         Global = Sankaku;
+    //Anime-pictures
+    var AnimePictures = {
+        name: 'anime-pictures',
+        status: 'alpha',
+        selectors: {
+            copyright: '.tags > li.green:first-of-type > a',
+            artist: '.tags > li.orange > a',
+            characters: '.tags > li.blue > a'
+        },
+        images: [
+            '#big_preview',
+            ".download_icon"
+        ],
+        render: function () {
+            console.log(iqdb.getImage());
+            var settings = '<h1 class='+ Global.name +' id="sett">Settings</h1>';
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
+            var divider = iqdb.createInput('text', '_divider', 'Separator');
+
+            var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
+            var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
+            var btnSearch = iqdb.createSearchButton(iqdb.getImage());
+
+            var parent = document.querySelector('.sidebar_block');
+            parent.insertAdjacentHTML('afterend','<br><div class='+Global.name+'>' + '<div class="'+Global.name+' title">' +
+                btnTags + btnImage + btnSearch + '</div>' +
+                settings +
+                '<ul class='+ Global.name +'>' +
+                postfix + divider + chars + artist +
+                '</ul><br></div>');
+        },
+        updateTags: function () {
+            var tagButton = document.getElementById('_tags');
+            tagButton.setAttribute('data-clipboard-text', iqdb.getTags());
+        }
+    };
+    if(/anime-pictures/i.test(location.href))
+        Global = AnimePictures;
+    //Manga-Drawing
+    var MangaDrawing  = {
+        name: 'manga-drawing',
+        status: 'alpha',
+        selectors: {
+            copyright: '.views-field-tid-2 > .field-content > a > span',
+            artist: '.views-field-tid-3 > .field-content > a > span',
+            characters: '.views-field-tid-1 > .field-content > a > span'
+        },
+        images: [
+           '.imagecache.imagecache-display'
+        ],
+        render: function () {
+            console.log(iqdb.getImage());
+            var settings = '<h3 class='+ Global.name +' id="sett">SETTINGS:</h3>';
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
+            var divider = iqdb.createInput('text', '_divider', 'Separator');
+
+            var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
+            var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
+            var btnSearch = iqdb.createSearchButton(iqdb.getImage());
+
+            var parent = document.querySelector('#block-panels_mini-node_info_block_pane');
+            parent.insertAdjacentHTML('afterbegin','<br><div class="'+Global.name+' iqdb-box">' + '<div class="'+Global.name+' title">' +
+                btnTags + btnImage + btnSearch + '</div>' +
+                settings +
+                '<ul class='+ Global.name +'>' +
+                postfix + divider + chars + artist +
+                '</ul><br></div>');
+        },
+        updateTags: function () {
+            var tagButton = document.getElementById('_tags');
+            tagButton.setAttribute('data-clipboard-text', iqdb.getTags());
+        }
+    };
+    if(/manga-drawing/i.test(location.href))
+        Global = MangaDrawing;
+    //Zerochan
+    var Zerochan  = {
+        name: 'zerochan',
+        status: 'alpha',
+        selectors: {
+            copyright: '#tags > li > a',
+            artist: '#tags > li > a',
+            characters: '#tags > li > a'
+        },
+        images: [
+            '.imagecache.imagecache-display'
+        ],
+        render: function () {
+            console.log(iqdb.getTags());
+            var settings = '<h2 class='+ Global.name +' id="sett">Settings</h2>';
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
+            var divider = iqdb.createInput('text', '_divider', 'Separator');
+
+            var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
+            var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
+            var btnSearch = iqdb.createSearchButton(iqdb.getImage());
+
+            var parent = document.querySelector('#rectangle');
+            parent.insertAdjacentHTML('afterend','<br><div class="'+Global.name+' iqdb-box">' + '<div class="'+Global.name+' title">' +
+                btnTags + btnImage + btnSearch + '</div>' +
+                settings +
+                '<ul class='+ Global.name +'>' +
+                postfix + divider + chars + artist +
+                '</ul><br></div>');
+        },
+        updateTags: function () {
+            var tagButton = document.getElementById('_tags');
+            tagButton.setAttribute('data-clipboard-text', iqdb.getTags());
+        }
+    };
+    if(/zerochan/i.test(location.href))
+        Global = Zerochan;
+
 
     console.log('Core "' + Global.name + '" is running. Status: ' + Global.status);
     Global.render();

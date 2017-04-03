@@ -1,1 +1,193 @@
-.btn{font-family:"Century Gothic",sans-serif;padding:.2em .5em;border:1px solid #000;line-height:1.5;margin:.1em}button.konachan,button.yandere{font-weight:bold;color:#ee8887;height:28px;width:100%;border:0;background-color:#555}button.konachan:hover,button.yandere:hover{background-color:#300}label.konachan{color:#ee8887;font-weight:600}li.yandere{margin-bottom:.2em !important;text-align:left !important;margin-top:.5em !important}label.yandere{border:0 !important}li.danbooru{margin-bottom:.2em !important;text-align:left !important;margin-top:.5em !important}label.danbooru{color:#000}li.gelbooru,li.konachan{margin-bottom:.2em !important;text-align:center !important;margin-top:.5em !important}li.check{text-align:left !important}button.gelbooru,button.danbooru{font-weight:bold;color:#fff;height:28px;width:100%;border:1px solid #e2e2e2;background-color:#006FFA}button.gelbooru:hover,button.danbooru:hover{background-color:#E89E02}input.gelbooru,input.konachan,input.yandere,label.yandere,input.danbooru{padding:2px;border:1px solid #e0e0e0}input.gelbooru:focus,input.konachan:focus,input.yandere:focus,label.yandere:focus,input.danbooru:focus{background-color:#ffc}label.gelbooru{color:#000}label.shuushuu{color:#204A87;font-weight:bold}button.shuushuu{background:#F5FAFF;border:1px solid #204A87;-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px;color:#204A87;cursor:pointer;font-weight:bold;margin:1px}button.shuushuu:hover{background:#fff;border-color:#E85305;color:#E85305;text-decoration:underline}button.shuushuu:focus{background:#204A87;border:2px solid #000;color:#fff !important;margin:0}button.sankaku{border:2px solid #DDD;font-weight:bold;padding:.2em 2em;margin:.1em;cursor:pointer}button.sankaku:hover{color:#666;background:#FAFAFA}input.sankaku:not(.check){border:2px solid #999;background:#FAFAFA;background-image:-moz-linear-gradient(#fff, #ddd);background-image:-webkit-gradient(linear, left bottom, left top, color-stop(0, #ddd), color-stop(1, #fff));-moz-border-radius:35px;border-radius:35px;border-width:1px;border-style:solid;border-color:#DDD;width:182px;height:20px;padding:2px 8px;overflow:hidden}input.sankaku:not(.check):hover,input.sankaku:not(.check):focus{background:#FAFAFA;outline:none;-moz-box-shadow:0 1px 4px rgba(0,0,0,0.5) inset;-webkit-box-shadow:0 1px 4px rgba(0,0,0,0.5) inset;box-shadow:0 1px 4px rgba(0,0,0,0.5) inset}
+.btn {
+  font-family: "Century Gothic", sans-serif;
+  padding: 0.2em 0.5em;
+  border: 1px solid #000000;
+  line-height: 1.5;
+  margin: 0.1em; }
+
+button.konachan, button.yandere {
+  font-weight: bold;
+  color: #ee8887;
+  height: 28px;
+  width: 100%;
+  border: 0;
+  background-color: #555; }
+  button.konachan:hover, button.yandere:hover {
+    background-color: #300; }
+
+label.konachan {
+  color: #ee8887;
+  font-weight: 600; }
+
+li.yandere {
+  margin-bottom: 0.2em !important;
+  text-align: left !important;
+  margin-top: 0.5em !important; }
+
+label.yandere {
+  border: 0 !important; }
+
+li.danbooru {
+  margin-bottom: 0.2em !important;
+  text-align: left !important;
+  margin-top: 0.5em !important; }
+
+label.danbooru {
+  color: #000; }
+
+li.gelbooru, li.konachan {
+  margin-bottom: 0.2em !important;
+  text-align: center !important;
+  margin-top: 0.5em !important; }
+
+li.check {
+  text-align: left !important; }
+
+button.gelbooru, button.danbooru {
+  font-weight: bold;
+  color: #fff;
+  height: 28px;
+  width: 100%;
+  border: 1px solid #e2e2e2;
+  background-color: #006FFA; }
+  button.gelbooru:hover, button.danbooru:hover {
+    background-color: #E89E02; }
+
+input.gelbooru, input.konachan, input.yandere, label.yandere, input.danbooru {
+  padding: 2px;
+  border: 1px solid #e0e0e0; }
+  input.gelbooru:focus, input.konachan:focus, input.yandere:focus, label.yandere:focus, input.danbooru:focus {
+    background-color: #ffc; }
+
+label.gelbooru {
+  color: #000; }
+
+label.shuushuu {
+  color: #204A87;
+  font-weight: bold; }
+
+button.shuushuu {
+  background: #F5FAFF;
+  border: 1px solid #204A87;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  color: #204A87;
+  cursor: pointer;
+  font-weight: bold;
+  margin: 1px; }
+  button.shuushuu:hover {
+    background: white;
+    border-color: #E85305;
+    color: #E85305;
+    text-decoration: underline; }
+  button.shuushuu:focus {
+    background: #204A87;
+    border: 2px solid black;
+    color: white !important;
+    margin: 0; }
+
+button.sankaku {
+  border: 2px solid #DDD;
+  font-weight: bold;
+  padding: 0.2em 2em;
+  margin: 0.1em;
+  cursor: pointer; }
+  button.sankaku:hover {
+    color: #666;
+    background: #FAFAFA; }
+
+input.sankaku:not(.check) {
+  border: 2px solid #999;
+  background: #FAFAFA;
+  background-image: -moz-linear-gradient(#fff, #DDDDDD);
+  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #DDDDDD), color-stop(1, #fff));
+  -moz-border-radius: 35px;
+  border-radius: 35px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #DDD;
+  width: 182px;
+  height: 20px;
+  padding: 2px 8px;
+  overflow: hidden; }
+  input.sankaku:not(.check):hover, input.sankaku:not(.check):focus {
+    background: #FAFAFA;
+    outline: none;
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5) inset; }
+
+.anime-pictures {
+  font-family: "Open Sans", sans-serif; }
+
+div.anime-pictures {
+  background: #1d0700; }
+
+div.anime-pictures.title {
+  background: #5d1600;
+  text-align: center; }
+
+li.anime-pictures {
+  margin-bottom: 5px;
+  margin-left: 5px; }
+
+.anime-pictures#_tags {
+  background-color: #65bb34; }
+
+.anime-pictures#_image {
+  background-color: #56a3d5; }
+
+.anime-pictures.iqdb-search {
+  background-color: #eb6b22; }
+
+div.manga-drawing.iqdb-box {
+  background-color: rgba(216, 141, 141, 0.38);
+  padding: 5px; }
+
+.manga-drawing#sett {
+  color: rgba(210, 63, 63, 0.49); }
+
+.manga-drawing.title {
+  text-align: center; }
+
+.manga-drawing#_tags {
+  color: #92cd00; }
+
+.manga-drawing#_image {
+  color: #b76eb8; }
+
+.manga-drawing.iqdb-search {
+  color: #f4ab10; }
+
+.btn.manga-drawing {
+  background-color: #fff !important;
+  margin: 2px !important;
+  padding: 0 3px !important;
+  border: 1px solid #fff !important; }
+  .btn.manga-drawing:hover {
+    background-color: #fff !important;
+    color: #f4ab10 !important;
+    border: 1px solid #d6dee5 !important; }
+
+label.zerochan {
+  display: inline !important;
+  margin-right: 5px !important;
+  font-weight: normal !important;
+  color: #46a !important; }
+
+button.zerochan {
+  padding: 3px 10px;
+  background: #46a;
+  border: solid 1px #46a;
+  color: #fff;
+  font-size: 10pt;
+  font-family: "Arial", sans-serif; }
+  button.zerochan:hover {
+    background-color: #f80;
+    border: solid 1px #f80; }
+
+.title.zerochan {
+  text-align: center; }
+
+/*# sourceMappingURL=iqdb-style.css.map */

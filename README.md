@@ -15,4 +15,6 @@ Script was created to make editor's life easier. This code will allow you:
 4. [Gelbooru](http://gelbooru.com)
 5. [E-ShuuShuu](http://e-shuushuu.net)
 6. [Sankaku](https://chan.sankakucomplex.com)
-
+7. [Zerochan](http://www.zerochan.net/)
+8. [Anime Pictures](https://anime-pictures.net/)
+9. [Manga Drawing](http://mangadrawing.net/)
