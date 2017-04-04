@@ -1,5 +1,6 @@
 /**
  * Created by 7KiLL on 28/07/16.
+ * UPD 1.7b:   Refactored some part of code, totally fixed zerochan bugs
  * UPD 1.6.1:  Fixed bugs with zerochan tags check and image link for zerochan
  * UPD 1.6b:   Added zerochan, anime-pictures, manga-drawing.
  * UPD 1.5.1b: characters replacing fixes
@@ -18,6 +19,7 @@ String.prototype.clearHash = function () {
         .replace(/:/g, '_')
         .replace(/@/g, 'a')
         .replace(/\//g, '_')
+        .replace(/\.+/,'')
         .replace(/\(\w+.../, '')
         .replace(/(^_+|_+$)/, '');
     clean = '#' + clean;
@@ -42,34 +44,31 @@ String.prototype.clearHash = function () {
 var Global = {}; //Declare Global object before core script because iqdb{} uses it
 //Script functions
 var iqdb = {
-    Checkbox: {
-        watch:  function (param, el) {
-            el.onclick = function () {
-                localStorage.setItem(param, el.checked);
+    loadSettings: function (e) {
+        var input = e;
+        if(typeof e == "string")
+            input = document.querySelector(e);
+        var data = input.getAttribute('data-store');
+        if(input.getAttribute('type')=="checkbox") {
+            if(localStorage.getItem(data)=="false"){
+                localStorage.setItem(data, "false");
+                input.checked = false;
+            }
+            else
+                input.checked = true;
+
+            input.onclick = function () {
+                localStorage.setItem(data, input.checked);
                 Global.updateTags();
             };
-        },
-        load:   function (param, el) {
-            if(localStorage.getItem(param)=="true"){
-                el.checked = true;
-            }
-            else{
-                localStorage.setItem(param, "false");
-                el.checked = false;
-            }
         }
-    },
-    Input: {
-        watch: function (param, el) {
-            el.oninput  = function () {
-                localStorage.setItem(param, el.value);
+        if(input.getAttribute('type')=="text") {
+            if(localStorage.getItem(data))
+                input.value = localStorage.getItem(data);
+            input.oninput  = function () {
+                localStorage.setItem(data, input.value);
                 Global.updateTags();
             };
-        },
-        load: function (param, el){
-            if(localStorage.getItem(param)) {
-                el.value = localStorage.getItem(param);
-            }
         }
     },
     searchRequest: function (e) {
@@ -84,11 +83,6 @@ var iqdb = {
         for (var i = 0; i < classname.length; i++) {
             classname[i].addEventListener('click', iqdbSearch, false);
         }
-        // var link = 'http://iqdb.org?url=' + e.getAttribute('data-img');
-        // e.onclick = function (event) {
-        //     event.preventDefault();
-        //     window.open(link, "_blank");
-        // }
     },
     unique: function (arr) {
         var obj = {};
@@ -104,14 +98,14 @@ var iqdb = {
         if(!localStorage.getItem(param))
             localStorage.setItem(param, value);
     },
-    createInput: function (type, id, text) {
+    createInput: function (type, id, text, data) {
         var name = Global.name;
         if(type == 'checkbox')
             name = '"' + Global.name + ' check"';
         var input;
         input = '<li class=' + name + '>' +
             '<label class='+ name +' for='+ id +'>'+ text +'</label>' +
-            '<input class='+ name +' type='+ type +' id='+ id +'>' +
+            '<input class='+ name +' type='+ type +' data-store='+ data +' id='+ id +'>' +
             '</li>';
         return input;
     },
@@ -138,8 +132,10 @@ var iqdb = {
         }
         else {
             [].forEach.call(tags, function(el) {
-                if(Global.name == "zerochan" && /Game|Series/.test(el.parentNode.innerHTML))
-                    tagsArray.push(el.innerHTML);
+                if(Global.name == "zerochan") {
+                    if(/Game|Series/.test(el.parentNode.innerHTML))
+                        tagsArray.push(el.innerHTML);
+                }
                 else
                     tagsArray.push(el.innerHTML);
             });
@@ -150,8 +146,10 @@ var iqdb = {
         if(localStorage.getItem('char')=="true"){
             var chars = e.querySelectorAll(Global.selectors.characters);
             [].forEach.call(chars, function(el) {
-                if(Global.name == "zerochan" && /Character/.test(el.parentNode.innerHTML))
-                    tagsArray.push(el.innerHTML);
+                if(Global.name == "zerochan") {
+                    if(/Character/.test(el.parentNode.innerHTML))
+                        tagsArray.push(el.innerHTML);
+                }
                 else
                     tagsArray.push(el.innerHTML);
             });
@@ -160,8 +158,10 @@ var iqdb = {
         if(localStorage.getItem('artist')=="true"){
             var artist = e.querySelectorAll(Global.selectors.artist);
             [].forEach.call(artist, function(el) {
-                if(Global.name == "zerochan" && /Mangaka/.test(el.parentNode.innerHTML))
-                    tagsArray.push(el.innerHTML);
+                if(Global.name == "zerochan") {
+                    if(/Mangaka/.test(el.parentNode.innerHTML))
+                        tagsArray.push(el.innerHTML);
+                    }
                 else
                     tagsArray.push(el.innerHTML);
             });
@@ -211,11 +211,11 @@ window.onload = function() {
         render: function () {
 
             var settings = '<h5 id="sett">Settings</h5>';
-            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
-            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?', 'char');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?', 'artist');
 
-            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
-            var divider = iqdb.createInput('text', '_divider', 'Separator');
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag', 'postfix');
+            var divider = iqdb.createInput('text', '_divider', 'Separator', 'divider');
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
@@ -249,11 +249,11 @@ window.onload = function() {
         ],
         render: function () {
             var settings = '<h5 id="sett">Settings</h5>';
-            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
-            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?', 'char');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?', 'artist');
 
-            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
-            var divider = iqdb.createInput('text', '_divider', 'Separator </br>');
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag', 'postfix');
+            var divider = iqdb.createInput('text', '_divider', 'Separator </br>', 'divider');
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
@@ -289,11 +289,11 @@ window.onload = function() {
         ],
         render: function () {
             var settings = '<strong id="sett">Settings</strong><br>';
-            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
-            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?', 'char');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?', 'artist');
 
-            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
-            var divider = iqdb.createInput('text', '_divider', 'Separator');
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag', 'postfix');
+            var divider = iqdb.createInput('text', '_divider', 'Separator', 'divider');
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
@@ -327,11 +327,11 @@ window.onload = function() {
         ],
         render: function () {
             var settings = '<strong class='+ Global.name +' id="sett">Settings</strong><br>';
-            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
-            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?', 'char');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?', 'artist');
 
-            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
-            var divider = iqdb.createInput('text', '_divider', 'Separator');
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag', 'postfix');
+            var divider = iqdb.createInput('text', '_divider', 'Separator', 'divider');
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
@@ -383,11 +383,11 @@ window.onload = function() {
                 ShuuShuu.createButtons(e);
             });
             var settings = '<h2 id="sett">Settings</h2>';
-            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
-            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?', 'char');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?', 'artist');
 
-            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
-            var divider = iqdb.createInput('text', '_divider', 'Separator');
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag', 'postfix');
+            var divider = iqdb.createInput('text', '_divider', 'Separator', 'divider');
             var checkboxes = document.querySelector('#sidebar');
             checkboxes.insertAdjacentHTML('afterbegin', '<div class="display">' +
                 settings + '<ul>' +
@@ -395,7 +395,7 @@ window.onload = function() {
                 '</ul></div>');
         }
     };
-    if(/./i.test(location.href))
+    if(/shuushuu/i.test(location.href))
         Global = ShuuShuu;
     //Sankaku
     var Sankaku = {
@@ -412,11 +412,11 @@ window.onload = function() {
         ],
         render: function () {
             var settings = '<h5 class='+ Global.name +' id="sett">Settings</h5><br>';
-            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
-            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?', 'char');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?', 'artist');
 
-            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
-            var divider = iqdb.createInput('text', '_divider', 'Separator');
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag', 'postfix');
+            var divider = iqdb.createInput('text', '_divider', 'Separator', 'divider');
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
@@ -452,11 +452,11 @@ window.onload = function() {
         render: function () {
             console.log(iqdb.getImage());
             var settings = '<h1 class='+ Global.name +' id="sett">Settings</h1>';
-            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
-            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?', 'char');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?', 'artist');
 
-            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
-            var divider = iqdb.createInput('text', '_divider', 'Separator');
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag', 'postfix');
+            var divider = iqdb.createInput('text', '_divider', 'Separator', 'divider');
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
@@ -492,11 +492,11 @@ window.onload = function() {
         render: function () {
             console.log(iqdb.getImage());
             var settings = '<h3 class='+ Global.name +' id="sett">SETTINGS:</h3>';
-            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
-            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?', 'char');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?', 'artist');
 
-            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
-            var divider = iqdb.createInput('text', '_divider', 'Separator');
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag', 'postfix');
+            var divider = iqdb.createInput('text', '_divider', 'Separator', 'divider');
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
@@ -532,11 +532,11 @@ window.onload = function() {
         render: function () {
             console.log(iqdb.getTags());
             var settings = '<h2 class='+ Global.name +' id="sett">Settings</h2>';
-            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?');
-            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?');
+            var chars = iqdb.createInput('checkbox', '_chars', 'Characters?', 'char');
+            var artist = iqdb.createInput('checkbox', '_artist', 'Artist?', 'artist');
 
-            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag');
-            var divider = iqdb.createInput('text', '_divider', 'Separator');
+            var postfix = iqdb.createInput('text', '_postfix', 'Append after tag', 'postfix');
+            var divider = iqdb.createInput('text', '_divider', 'Separator', 'divider');
 
             var btnTags = iqdb.createButton('_tags', 'Tags', iqdb.getTags());
             var btnImage = iqdb.createButton('_image', 'Image', iqdb.getImage());
@@ -562,19 +562,12 @@ window.onload = function() {
     console.log('Core "' + Global.name + '" is running. Status: ' + Global.status);
     Global.render();
 
-    var charCheckbox = document.getElementById('_chars');
-    var artistCheckbox = document.getElementById('_artist');
-    var inputPostfix = document.getElementById('_postfix');
-    var inputDivider = document.getElementById('_divider');
+    //Initialize inputs and add listeners
+    iqdb.loadSettings('#_chars');
+    iqdb.loadSettings('#_artist');
+    iqdb.loadSettings('#_postfix');
+    iqdb.loadSettings('#_divider');
 
-    iqdb.Checkbox.load('char', charCheckbox);
-    iqdb.Checkbox.watch('char', charCheckbox);
-    iqdb.Checkbox.load('artist', artistCheckbox);
-    iqdb.Checkbox.watch('artist', artistCheckbox);
-    iqdb.Input.load('postfix', inputPostfix);
-    iqdb.Input.watch('postfix', inputPostfix);
-    iqdb.Input.load('divider', inputDivider);
-    iqdb.Input.watch('divider', inputDivider);
     iqdb.searchRequest('iqdb-search');
 
 };
